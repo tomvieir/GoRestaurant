@@ -34,14 +34,6 @@ export function Food({food, handleEditFood, handleDelete}: FoodProps) {
     setIsAvaliable(!isAvailable);
   }
 
-  const setEditingFood = () => {
-    handleEditFood(food);
-  }
-
-  
-    
-   
-
     return (
       <Container available={isAvailable}>
         <header>
@@ -59,7 +51,7 @@ export function Food({food, handleEditFood, handleDelete}: FoodProps) {
             <button
               type="button"
               className="icon"
-              onClick={setEditingFood}
+              onClick={() => handleEditFood(food)}
               data-testid={`edit-food-${food.id}`}
             >
               <FiEdit3 size={20} />
