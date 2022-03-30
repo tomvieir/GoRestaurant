@@ -16,8 +16,8 @@ interface FoodObj {
 }
 interface FoodProps {
   food: FoodObj,
-  handleEditFood: (food: FoodObj) => Promise<void>
-  handleDelete: (id: number) => Promise<void>
+  handleEditFood: (food: FoodObj) => void,
+  handleDelete: (id: number) => void
 
 }
 
@@ -59,7 +59,7 @@ export function Food({food, handleEditFood, handleDelete}: FoodProps) {
             <button
               type="button"
               className="icon"
-              onClick={() => setEditingFood}
+              onClick={setEditingFood}
               data-testid={`edit-food-${food.id}`}
             >
               <FiEdit3 size={20} />

@@ -15,32 +15,35 @@ interface FoodObj {
   available: boolean,
   image: string
 }
-interface DashboardProps {
-  isOpen: boolean,
-  food: FoodObj
+
+
+interface DataProps {
+  image: string,
+  name: string,
+  price: string,
+  description: string
 }
 
-export function Dashboard({food, isOpen}:DashboardProps) {
-  const [foods, setFoods] = useState<FoodObj[]>([])
-  const [editingFood, setEditingFood] = useState<FoodObj>({} as FoodObj)
-  const [modalOpen, setModalOpen] = useState(false)
-  const [editModalOpen, setEditModalOpen] = useState(false)
- 
-  useEffect( () => {
-    async function getFood() {
-    const response = await api.get('/foods');
+
+export function Dashboard() {
+  const [foods, setFoods] = useState<FoodObj[]>([]);
+  const [editingFood, setEditingFood] = useState<FoodObj>({} as FoodObj);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    async function getFoods() {
+      const response = await api.get('/foods');
 
       setFoods(response.data);
     }
-
-    getFood()
-
+    getFoods()
   }, [])
+
   
-
-  const handleAddFood = async (food: Omit<FoodObj, 'id' | 'available'>): Promise<void> => {
-    
-
+  async function handleAddFood(
+    food: Omit<FoodObj, 'id' | 'available'>,
+  ): Promise<void> {
     try {
       const response = await api.post('/foods', {
         ...food,
@@ -53,8 +56,7 @@ export function Dashboard({food, isOpen}:DashboardProps) {
     }
   }
 
-  const handleUpdateFood = async (food: Omit<FoodObj, 'id' | 'available'>): Promise<void> => {
-  
+  const handleUpdateFood = async (food: DataProps): Promise<void> => {
     try {
       const foodUpdated = await api.put(
         `/foods/${editingFood.id}`,
@@ -71,8 +73,7 @@ export function Dashboard({food, isOpen}:DashboardProps) {
     }
   }
 
-  const handleDeleteFood = async (id: number) => {
-
+  const handleDeleteFood = async (id:number) => {
     await api.delete(`/foods/${id}`);
 
     const foodsFiltered = foods.filter(food => food.id !== id);
@@ -81,7 +82,7 @@ export function Dashboard({food, isOpen}:DashboardProps) {
   }
 
   const toggleModal = () => {
-    setModalOpen(!modalOpen);
+    setModalOpen( !modalOpen );
   }
 
   const toggleEditModal = () => {
@@ -90,40 +91,36 @@ export function Dashboard({food, isOpen}:DashboardProps) {
 
   const handleEditFood = (food: FoodObj) => {
     setEditModalOpen(true);
-    setEditingFood(editingFood)
+    setEditingFood(food);
   }
 
- 
-  
+  return (
+    <>
+      <Header openModal={toggleModal} />
+      <ModalAddFood
+        isOpen={modalOpen}
+        setIsOpen={toggleModal}
+        handleAddFood={handleAddFood}
+      />
+      <ModalEditFood
+        isOpen={editModalOpen}
+        setIsOpen={toggleEditModal}
+        editingFood={editingFood}
+        handleUpdateFood={handleUpdateFood}
+      />
 
-    return (
-      <>
-        <Header openModal={toggleModal} />
-        <ModalAddFood
-          isOpen={modalOpen}
-          setIsOpen={toggleModal}
-          handleAddFood={() => handleAddFood}
-        />
-        <ModalEditFood
-          isOpen={editModalOpen}
-          setIsOpen={toggleEditModal}
-          editingFood={editingFood}
-          handleUpdateFood={handleUpdateFood}
-        />
+      <FoodsContainer data-testid="foods-list">
+        {foods &&
+          foods.map(food => (
+            <Food
+              key={food.id}
+              food={food}
+              handleDelete={handleDeleteFood}
+              handleEditFood={handleEditFood}
+            />
+          ))}
+      </FoodsContainer>
+    </>
+  );
 
-        <FoodsContainer data-testid="foods-list">
-          {foods &&
-            foods.map(food => (
-              <Food
-                key={food.id}
-                food={food}
-                handleDelete={handleDeleteFood}
-                handleEditFood={async () => (handleEditFood(food))}
-              />
-            ))}
-        </FoodsContainer>
-      </>
-    );
-  }
-
-
+}

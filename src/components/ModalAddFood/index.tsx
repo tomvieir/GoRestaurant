@@ -4,8 +4,7 @@ import { FiCheckSquare } from 'react-icons/fi';
 import { Form } from './styles';
 import {Modal} from '../Modal';
 import Input from '../Input';
-
-
+import { FormHandles } from '@unform/core';
 
 
 interface DataProps {
@@ -28,7 +27,7 @@ export function ModalAddFood({isOpen, setIsOpen, handleAddFood}: ModalAddFoodPro
     setIsOpen();
   };
 
-  const formRef = useRef(null)
+  const formRef = useRef<FormHandles>(null)
 
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -48,7 +47,7 @@ export function ModalAddFood({isOpen, setIsOpen, handleAddFood}: ModalAddFoodPro
         </button>
       </Form>
     </Modal>
-    );
+  );
   
 };
 
